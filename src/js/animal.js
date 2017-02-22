@@ -1,11 +1,4 @@
 
-export class animal{
-  constructor(name){
-    this.name = name;
-  }
-  sayhi(){
-    alert(this.name);
-    var mylove ;
-  }
+module.exports = function(value) {
+	return value * 2;
 }
-export var myname = "mtjs " ;

@@ -8,21 +8,10 @@
 <body>
     @@include('header.inc')
     <div class="d1"><a href="main.html">223</a></div>
-    <h2>测试112211！</h2>
+    <h2>测试~11</h2>
+    <img src="./images/ccc.png" alt="" width="300">
     <p></p>
 </body>
-<script src="scripts/lib/jquery-2.0.3.min.js"></script>
-<script>
-    $.ajax({
-        type:'get',
-        url:'/sysArea/getDistrictList',
-        success:function(data){
-            console.log(data[0]);
-            $("p").text("areaName: " + data[0].areaName);            
-        },
-        error:function(){
-            $.toast("系统繁忙，请稍后重试",2000);
-        }
-    });
-</script>
+<script src="scripts/jquery-2.0.3.min.js"></script>
+<script src ="scripts/index.js"></script>
 </html>

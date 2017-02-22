@@ -1,27 +1,25 @@
+var animal = require('./animal');
+var formatDate = require('./date');
 
-import cats from './cat' ;
-import {animal,myname} from './animal' ;
-var a = 2;
+var result = animal(2);
+console.log(result);
 
-$(function(){
-  init() ;
+var time = 1469281964000;
+function logDate(time){
+  var date = new Date(time);
+  console.log(formatDate(date, 'yyyy-MM-dd hh:mm'));
+}
+logDate(time);
+
+
+$.ajax({
+    type:'get',
+    url:'/sysArea/getDistrictList',
+    success:function(data){
+        console.log(data[0]);
+        $("p").text("areaName: " + data[0].areaName);            
+    },
+    error:function(){
+        $.toast("系统繁忙，请稍后重试",2000);
+    }
 });
-
-function init(){
-  initClick() ;
-}
-
-function initClick(){
-  console.log(cats) ;
-  $(".d1").click(function(){
-    $(this).animate({height:"300px"},2000) ;
-  });
-  $('<h1>Cats</h1>').appendTo('body');
-  const ul = $('<ul></ul>').appendTo('body');
-  console.log(myname) ;
-  for (const cat of cats) {
-    $('<li></li>').text(cat).appendTo(ul);
-    var cat = new animal(cat) ;
-    cat.sayhi() ;
-  }
-}

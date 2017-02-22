@@ -1,3 +1,5 @@
 <header>
-    <div class="banner"></div>
+    <div class="banner">
+        I am banner~
+    </div>
 </header>

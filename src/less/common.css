@@ -1,5 +1,5 @@
 body {
-  background: #ccc;
+  background: rgba(204, 204, 204, 0.31);
 }
 body h2 {
   color: blue;
@@ -8,4 +8,8 @@ body p {
   color: red;
   font-size: 12px;
   font-weight: 400;
+}
+body a {
+  font-size: 20px;
+  color: red;
 }
