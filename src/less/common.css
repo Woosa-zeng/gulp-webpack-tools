@@ -1,0 +1,11 @@
+body {
+  background: #ccc;
+}
+body h2 {
+  color: blue;
+}
+body p {
+  color: red;
+  font-size: 12px;
+  font-weight: 400;
+}
