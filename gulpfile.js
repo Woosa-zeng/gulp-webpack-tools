@@ -18,39 +18,42 @@ var cleanCSS = require('gulp-clean-css');
 var babel = require('gulp-babel');
 var concat = require('gulp-concat');
 var pngquant = require('imagemin-pngquant');
+var rev = require('gulp-rev');
+var revCollector = require('gulp-rev-collector');
 var md5 = require('gulp-md5-plus');
+var htmlmin = require('gulp-htmlmin');
+var spritesmith = require('gulp.spritesmith');
 var paths = require('./gulp-config-paths');
 
 
-function clean() {
-    return del(['dist/*']);
-}
 
+function clean() {
+    return del(['dist/**']);
+}
+function cleanBuild() {
+    return del(['build/*','rev/*']);
+}
 function styles() {
   return gulp.src(paths.styles.src)
     .pipe(less())
-    .pipe(cleanCSS())
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    // .pipe(md5(10,paths.html.src))
+    .pipe(autoprefixer())
     .pipe(gulp.dest(paths.styles.dest))
     .pipe(connect.reload());
 }
+
 function html() {
     return gulp.src(paths.html.src)  
-        .pipe(fileinclude()) 
+        .pipe(fileinclude())
         .pipe(gulp.dest(paths.html.dest))
         .pipe(connect.reload());
 }
 function scripts() {
-    return gulp.src(paths.scripts.src)
-        .pipe(babel())
+    return gulp.src(paths.scripts.src)        
         .pipe(named())
         .pipe(webpack({
             // devtool: "source-map"
         }))
-        // .pipe(md5(10, paths.html.src))
+        .pipe(babel())
         .pipe(gulp.dest(paths.scripts.dest))
         .pipe(connect.reload());
 }
@@ -92,6 +95,56 @@ function server(){
         }
     });
 }
+function distServer(){
+    connect.server({
+        root: ['build'], 
+        port: 8000,
+        livereload: true,
+        middleware: function(connect, opt) {
+            return [
+                /*代理服务器配置*/
+                proxy('/sysArea/getDistrictList',  {
+                    target: 'http://localhost:8080',
+                    changeOrigin:true
+                })
+            ];
+        }
+    });
+}
+function distJs() {
+    return gulp.src('dist/scripts/*.js')
+        .pipe(uglify())
+        .pipe(rev())
+        .pipe(gulp.dest('build/scripts'))
+        .pipe(rev.manifest())
+        .pipe(gulp.dest('./rev/scripts'));
+}
+function distHtml() {
+    return gulp.src('dist/*.html')
+        .pipe(htmlmin({collapseWhitespace: true})) 
+        .pipe(gulp.dest('build/'));
+}
+function revs() {
+    return gulp.src(['./rev/**/*.json','dist/*.html'])
+        .pipe(htmlmin({collapseWhitespace: true}))
+        .pipe(revCollector())
+        .pipe(gulp.dest('build/'));
+}
+function distCss() {
+    return gulp.src('dist/less/*.css')
+        .pipe(cleanCSS())
+        .pipe(rev())
+        .pipe(gulp.dest('build/less'))
+        .pipe(rev.manifest())
+        .pipe(gulp.dest('./rev/less'));
+}
+
+function distImg() {
+    return gulp.src('dist/images/*.png')
+        .pipe(imagemin({optimizationLevel: 3, progressive: true, interlaced: true, multipass: true}))
+        .pipe(gulp.dest('build/images'));
+}
+
 exports.clean = clean;
 exports.html = html;
 exports.styles = styles;
@@ -101,9 +154,21 @@ exports.img = img;
 exports.watch = watch;
 exports.server = server;
 
-var build = gulp.series(clean, gulp.parallel(html,styles,scripts,images,watch,server));
+exports.distJs = distJs;
+exports.distCss = distCss;
+exports.distHtml = distHtml;
+exports.distImg = distImg;
+exports.cleanBuild = cleanBuild;
+exports.distServer = distServer;
+exports.revs = revs;
 
-gulp.task('dev', build);
-gulp.task('default', build);
+
+
+var dev = gulp.series(clean, gulp.parallel(html,styles,scripts,images,watch,server));
+var build = gulp.series(cleanBuild,distJs,distCss, gulp.parallel(revs,distImg,distServer));
+
+gulp.task('dev', dev);
+gulp.task('build', build);
+
 
 
