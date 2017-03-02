@@ -24,6 +24,8 @@
 
 ### 注意事项
 	* 首次打开页面可能图片加载过慢，需要在加载完成后手动刷新页面一次
+	* 使用gulp4,参考https://github.com/gulpjs/gulp/tree/4.0
+	* gulpfile.js里面的代理服务器proxy需要配置
 
 
 

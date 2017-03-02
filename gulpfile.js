@@ -20,7 +20,6 @@ var concat = require('gulp-concat');
 var pngquant = require('imagemin-pngquant');
 var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
-var md5 = require('gulp-md5-plus');
 var htmlmin = require('gulp-htmlmin');
 var spritesmith = require('gulp.spritesmith');
 var paths = require('./gulp-config-paths');
