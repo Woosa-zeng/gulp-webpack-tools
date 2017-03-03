@@ -2,6 +2,7 @@
 	npm install  或者 cnpm install
 	gulp dev 启动 服务器
 	测试可单独执行每项
+	默认dev启动时root设置为dist,运行gulp build时需要修改server-config.js里root为build
 
 ### 功能
 

@@ -23,6 +23,7 @@ var revCollector = require('gulp-rev-collector');
 var htmlmin = require('gulp-htmlmin');
 var spritesmith = require('gulp.spritesmith');
 var paths = require('./gulp-config-paths');
+var servers = require('./server-config');
 
 
 
@@ -78,38 +79,7 @@ function watch() {
   gulp.watch(paths.images.src, images);
   gulp.watch(paths.html.src, html);
 }
-function server(){
-    connect.server({
-        root: ['dist'], 
-        port: 8000,
-        livereload: true,
-        middleware: function(connect, opt) {
-            return [
-                /*代理服务器配置*/
-                proxy('/sysArea/getDistrictList',  {
-                    target: 'http://localhost:8080',
-                    changeOrigin:true
-                })
-            ];
-        }
-    });
-}
-function distServer(){
-    connect.server({
-        root: ['build'], 
-        port: 8000,
-        livereload: true,
-        middleware: function(connect, opt) {
-            return [
-                /*代理服务器配置*/
-                proxy('/sysArea/getDistrictList',  {
-                    target: 'http://localhost:8080',
-                    changeOrigin:true
-                })
-            ];
-        }
-    });
-}
+
 function distJs() {
     return gulp.src('dist/scripts/*.js')
         .pipe(uglify())
@@ -151,20 +121,18 @@ exports.scripts = scripts;
 exports.images = images;
 exports.img = img;
 exports.watch = watch;
-exports.server = server;
 
 exports.distJs = distJs;
 exports.distCss = distCss;
 exports.distHtml = distHtml;
 exports.distImg = distImg;
 exports.cleanBuild = cleanBuild;
-exports.distServer = distServer;
 exports.revs = revs;
 
 
 
-var dev = gulp.series(clean, gulp.parallel(html,styles,scripts,images,watch,server));
-var build = gulp.series(cleanBuild,distJs,distCss, gulp.parallel(revs,distImg,distServer));
+var dev = gulp.series(clean, gulp.parallel(html,styles,scripts,images,watch,servers));
+var build = gulp.series(cleanBuild,distJs,distCss, gulp.parallel(revs,distImg,servers));
 
 gulp.task('dev', dev);
 gulp.task('build', build);
